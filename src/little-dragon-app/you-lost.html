@@ -1,0 +1,23 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="you-lost">
+
+    <template>
+        <style>
+            p {
+                color: red;
+            }
+        </style>
+
+        <p>Oh no! Sorry, you lost…</p>
+
+    </template>
+
+    <script>
+    	class YouLost extends Polymer.Element {
+            static get is() { return "you-lost"; }
+        }
+        customElements.define(YouLost.is, YouLost);
+    </script>
+
+</dom-module>

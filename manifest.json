@@ -1,0 +1,6 @@
+{
+  "name": "little-dragon",
+  "short_name": "little-dragon",
+  "start_url": "/",
+  "display": "standalone"
+}

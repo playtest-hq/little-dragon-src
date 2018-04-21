@@ -1,0 +1,157 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="you-won.html">
+<link rel="import" href="you-lost.html">
+
+<dom-module id="little-dragon-app">
+  <template>
+        <style>
+            .warning {
+                color: red;
+            }
+        </style>
+
+        <p>
+            <button on-click="setEasy" disabled="[[isRunning]]">Easy</button>
+            <button on-click="setMedium" disabled="[[isRunning]]">Medium</button>
+            <button on-click="setHard" disabled="[[isRunning]]">Hard</button>
+        </p>
+        <p>
+            <button on-click="startTimer" disabled="[[isRunning]]">Start!</button>
+            <button on-click="pauseTimer" disabled="[[!isRunning]]">Pause</button>
+            <button on-click="resetTimer">Reset</button>
+        </p>
+        <p>Game time left: <b>[[main]]</b></p>
+        <p class-list="[[feedingClass]]">Feeder time left: <b>[[feeder]]</b></p>
+        <p><button on-click="feed" disabled="[[feedingDisabled]]">Feed!</button></p>
+        <p>Number of successes left: <b>[[successesLeft]]</b></p>
+        <p><button on-click="logSuccess" disabled="[[!isRunning]]">Log success</button></p>
+
+        <template is="dom-if" if="[[wonGame]]">
+            <you-won></you-won>
+        </template>
+        <template is="dom-if" if="[[lostGame]]">
+            <you-lost></you-lost>
+        </template>
+    </template>
+
+    <script>
+        (function() {
+            var mainLength = 600;
+            var feederLength = 150;
+            var goal = 6;
+            var intervalHandle;
+
+            class LittleDragonApp extends Polymer.Element {
+                static get is() { return "little-dragon-app"; }
+
+                static get properties() {
+                    return {
+                        main: Number,
+                        feeder: Number,
+                        isRunning: Boolean,
+                        successesLeft: Number,
+                        wonGame: Boolean,
+                        lostGame: Boolean,
+                        feedingDisabled: {
+                            type: Boolean,
+                            computed: 'computeFeedingDisabled(feeder, isRunning)'
+                        },
+                        feedingClass: {
+                            type: String,
+                            computed: 'computeFeedingClass(feeder)'
+                        }
+                    }
+                }
+
+                constructor() {
+                    super();
+                    this.main = mainLength;
+                    this.feeder = feederLength;
+                    this.isRunning = false;
+                    this.successesLeft = goal;
+                    this.wonGame = false;
+                    this.lostGame = false;
+                }
+
+                computeFeedingDisabled(feeder, isRunning) {
+                    return !isRunning || feeder > 30;
+                }
+
+                computeFeedingClass(feeder) {
+                    return feeder <= 30 ? 'warning' : '';
+                }
+
+                startTimer() {
+                    var vm = this;
+                    vm.isRunning = true;
+                    intervalHandle = setInterval(function() {
+                        vm.main -= 1;
+                        vm.feeder -= 1;
+                        if (vm.feeder < 1 || vm.main < 1) {
+                            vm.isRunning = false;
+                            clearInterval(intervalHandle);
+                            vm.lostGame = true;
+                        }
+                    }, 1000);
+                }
+
+                pauseTimer() {
+                    clearInterval(intervalHandle);
+                    this.isRunning = false;
+                }
+
+                resetTimer() {
+                    clearInterval(intervalHandle);
+                    this.isRunning = false;
+                    this.main = mainLength;
+                    this.feeder = feederLength;
+                    this.successesLeft = goal;
+                    this.wonGame = false;
+                    this.lostGame = false;
+                }
+
+                logSuccess() {
+                    this.successesLeft -= 1;
+                    if (this.successesLeft < 1) {
+                        clearInterval(intervalHandle);
+                        this.isRunning = false;
+                        this.wonGame = true;
+                    }
+                }
+
+                feed() {
+                    this.feeder = feederLength - this.feeder;
+                }
+
+                setEasy() {
+                    mainLength = 600;
+                    feederLength = 150;
+                    goal = 6;
+                    this.successesLeft = goal;
+                    this.main = mainLength;
+                    this.feeder = feederLength;
+                }
+
+                setMedium() {
+                    mainLength = 480;
+                    feederLength = 120;
+                    goal = 6;
+                    this.successesLeft = goal;
+                    this.main = mainLength;
+                    this.feeder = feederLength;
+                }
+
+                setHard() {
+                    mainLength = 420;
+                    feederLength = 105;
+                    goal = 7;
+                    this.successesLeft = goal;
+                    this.main = mainLength;
+                    this.feeder = feederLength;
+                }
+            }
+            customElements.define(LittleDragonApp.is, LittleDragonApp);
+        })();
+    </script>
+</dom-module>

@@ -1,0 +1,23 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="you-won">
+
+    <template>
+        <style>
+            p {
+                color: green;
+            }
+        </style>
+
+        <p>Yay! You won!</p>
+
+    </template>
+
+    <script>
+    	class YouWon extends Polymer.Element {
+            static get is() { return "you-won"; }
+        }
+        customElements.define(YouWon.is, YouWon);
+    </script>
+
+</dom-module>
