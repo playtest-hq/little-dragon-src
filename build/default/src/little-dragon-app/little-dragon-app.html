@@ -26,6 +26,8 @@
         <p><button on-click="feed" disabled="[[feedingDisabled]]">Feed!</button></p>
         <p>Number of successes left: <b>[[successesLeft]]</b></p>
         <p><button on-click="logSuccess" disabled="[[!isRunning]]">Log success</button></p>
+        <p>Remaining clues: <b>[[clues]]</b></p>
+        <p><button on-click="useClue" disabled="[[cluesDisabled]]">Use clue</button></p>
 
         <template is="dom-if" if="[[wonGame]]">
             <you-won></you-won>
@@ -41,6 +43,7 @@
             var feederLength = 150;
             var goal = 6;
             var intervalHandle;
+            var clues = 3;
 
             class LittleDragonApp extends Polymer.Element {
                 static get is() { return "little-dragon-app"; }
@@ -51,6 +54,7 @@
                         feeder: Number,
                         isRunning: Boolean,
                         successesLeft: Number,
+                        clues: Number,
                         wonGame: Boolean,
                         lostGame: Boolean,
                         feedingDisabled: {
@@ -60,6 +64,10 @@
                         feedingClass: {
                             type: String,
                             computed: 'computeFeedingClass(feeder)'
+                        },
+                        cluesDisabled: {
+                            type: Boolean,
+                            computed: 'computeCluesDisabled(clues, isRunning)'
                         }
                     }
                 }
@@ -70,6 +78,7 @@
                     this.feeder = feederLength;
                     this.isRunning = false;
                     this.successesLeft = goal;
+                    this.clues = clues;
                     this.wonGame = false;
                     this.lostGame = false;
                 }
@@ -80,6 +89,10 @@
 
                 computeFeedingClass(feeder) {
                     return feeder <= 30 ? 'warning' : '';
+                }
+
+                computeCluesDisabled(clues, isRunning) {
+                    return !isRunning || clues < 1;
                 }
 
                 startTimer() {
@@ -107,6 +120,7 @@
                     this.main = mainLength;
                     this.feeder = feederLength;
                     this.successesLeft = goal;
+                    this.clues = clues;
                     this.wonGame = false;
                     this.lostGame = false;
                 }
@@ -124,11 +138,16 @@
                     this.feeder = feederLength - this.feeder;
                 }
 
+                useClue() {
+                    this.clues -= 1;
+                }
+
                 setEasy() {
                     mainLength = 600;
                     feederLength = 150;
                     goal = 6;
                     this.successesLeft = goal;
+                    this.clues = clues;
                     this.main = mainLength;
                     this.feeder = feederLength;
                 }
@@ -138,6 +157,7 @@
                     feederLength = 120;
                     goal = 6;
                     this.successesLeft = goal;
+                    this.clues = clues;
                     this.main = mainLength;
                     this.feeder = feederLength;
                 }
@@ -147,6 +167,7 @@
                     feederLength = 105;
                     goal = 7;
                     this.successesLeft = goal;
+                    this.clues = clues;
                     this.main = mainLength;
                     this.feeder = feederLength;
                 }
