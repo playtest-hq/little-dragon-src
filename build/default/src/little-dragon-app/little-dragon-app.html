@@ -27,7 +27,8 @@
         <p>Number of successes left: <b>[[successesLeft]]</b></p>
         <p><button on-click="logSuccess" disabled="[[!isRunning]]">Log success</button></p>
         <p>Remaining clues: <b>[[clues]]</b></p>
-        <p><button on-click="useClue" disabled="[[cluesDisabled]]">Use clue</button></p>
+        <p><button on-click="useGeneralClue" disabled="[[generalCluesDisabled]]">Use general clue</button></p>
+        <p><button on-click="useSpecificClue" disabled="[[specificCluesDisabled]]">Use specific clue</button></p>
 
         <template is="dom-if" if="[[wonGame]]">
             <you-won></you-won>
@@ -66,9 +67,13 @@
                             type: String,
                             computed: 'computeFeedingClass(feeder)'
                         },
-                        cluesDisabled: {
+                        generalCluesDisabled: {
                             type: Boolean,
-                            computed: 'computeCluesDisabled(clues, isRunning)'
+                            computed: 'computeGeneralCluesDisabled(clues, isRunning)'
+                        },
+                        specificCluesDisabled: {
+                            type: Boolean,
+                            computed: 'computeSpecificCluesDisabled(clues, isRunning)'
                         }
                     }
                 }
@@ -92,8 +97,12 @@
                     return feeder <= 30 ? 'warning' : '';
                 }
 
-                computeCluesDisabled(clues, isRunning) {
+                computeGeneralCluesDisabled(clues, isRunning) {
                     return !isRunning || clues < 1;
+                }
+
+                computeSpecificCluesDisabled(clues, isRunning) {
+                    return !isRunning || clues < 2;
                 }
 
                 startTimer() {
@@ -143,8 +152,12 @@
                     this.feeder = feederLength - this.feeder;
                 }
 
-                useClue() {
+                useGeneralClue() {
                     this.clues -= 1;
+                }
+
+                useSpecificClue() {
+                    this.clues -= 2;
                 }
 
                 addClue() {
