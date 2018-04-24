@@ -44,6 +44,7 @@
             var goal = 6;
             var intervalHandle;
             var clues = 3;
+            var cluesTimeoutHandle;
 
             class LittleDragonApp extends Polymer.Element {
                 static get is() { return "little-dragon-app"; }
@@ -98,6 +99,7 @@
                 startTimer() {
                     var vm = this;
                     vm.isRunning = true;
+                    this.addClue();
                     intervalHandle = setInterval(function() {
                         vm.main -= 1;
                         vm.feeder -= 1;
@@ -111,11 +113,13 @@
 
                 pauseTimer() {
                     clearInterval(intervalHandle);
+                    clearTimeout(cluesTimeoutHandle);
                     this.isRunning = false;
                 }
 
                 resetTimer() {
                     clearInterval(intervalHandle);
+                    clearTimeout(cluesTimeoutHandle);
                     this.isRunning = false;
                     this.main = mainLength;
                     this.feeder = feederLength;
@@ -129,6 +133,7 @@
                     this.successesLeft -= 1;
                     if (this.successesLeft < 1) {
                         clearInterval(intervalHandle);
+                        clearTimeout(cluesTimeoutHandle);
                         this.isRunning = false;
                         this.wonGame = true;
                     }
@@ -142,34 +147,38 @@
                     this.clues -= 1;
                 }
 
+                addClue() {
+                    var vm = this;
+                    var timeout = Math.round((Math.random() * 8 + 17) * 1000);
+                    console.log(`Adding clue in ${timeout} milliseconds`);
+                    cluesTimeoutHandle = setTimeout(function() {
+                        console.log('Are we running?', vm.isRunning);
+                        if (vm.isRunning) {
+                            vm.clues += 1;
+                            vm.addClue();
+                        }
+                    }, timeout);
+                }
+
                 setEasy() {
                     mainLength = 600;
                     feederLength = 150;
                     goal = 6;
-                    this.successesLeft = goal;
-                    this.clues = clues;
-                    this.main = mainLength;
-                    this.feeder = feederLength;
+                    this.resetTimer();
                 }
 
                 setMedium() {
                     mainLength = 480;
                     feederLength = 120;
                     goal = 6;
-                    this.successesLeft = goal;
-                    this.clues = clues;
-                    this.main = mainLength;
-                    this.feeder = feederLength;
+                    this.resetTimer();
                 }
 
                 setHard() {
                     mainLength = 420;
                     feederLength = 105;
                     goal = 7;
-                    this.successesLeft = goal;
-                    this.clues = clues;
-                    this.main = mainLength;
-                    this.feeder = feederLength;
+                    this.resetTimer();
                 }
             }
             customElements.define(LittleDragonApp.is, LittleDragonApp);
