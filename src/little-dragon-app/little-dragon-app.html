@@ -40,9 +40,9 @@
 
     <script>
         (function() {
-            var mainLength = 600;
-            var feederLength = 150;
-            var goal = 6;
+            var mainLength;
+            var feederLength = 2 * 60;
+            var goal;
             var intervalHandle;
             var clues = 3;
             var cluesTimeoutHandle;
@@ -80,13 +80,14 @@
 
                 constructor() {
                     super();
-                    this.main = mainLength;
-                    this.feeder = feederLength;
-                    this.isRunning = false;
-                    this.successesLeft = goal;
-                    this.clues = clues;
-                    this.wonGame = false;
-                    this.lostGame = false;
+                    this.setEasy();
+                    // this.main = mainLength;
+                    // this.feeder = feederLength;
+                    // this.isRunning = false;
+                    // this.successesLeft = goal;
+                    // this.clues = clues;
+                    // this.wonGame = false;
+                    // this.lostGame = false;
                 }
 
                 computeFeedingDisabled(feeder, isRunning) {
@@ -163,9 +164,7 @@
                 addClue() {
                     var vm = this;
                     var timeout = Math.round((Math.random() * 8 + 17) * 1000);
-                    console.log(`Adding clue in ${timeout} milliseconds`);
                     cluesTimeoutHandle = setTimeout(function() {
-                        console.log('Are we running?', vm.isRunning);
                         if (vm.isRunning) {
                             vm.clues += 1;
                             vm.addClue();
@@ -174,22 +173,19 @@
                 }
 
                 setEasy() {
-                    mainLength = 600;
-                    feederLength = 150;
-                    goal = 6;
+                    mainLength = 5 * 60;
+                    goal = 3;
                     this.resetTimer();
                 }
 
                 setMedium() {
-                    mainLength = 480;
-                    feederLength = 120;
-                    goal = 6;
+                    mainLength = 6 * 60;
+                    goal = 5;
                     this.resetTimer();
                 }
 
                 setHard() {
-                    mainLength = 420;
-                    feederLength = 105;
+                    mainLength = 7 * 60;
                     goal = 7;
                     this.resetTimer();
                 }
